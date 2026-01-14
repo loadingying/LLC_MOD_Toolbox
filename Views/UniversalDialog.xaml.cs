@@ -7,9 +7,9 @@ namespace LLC_MOD_Toolbox
     public partial class UniversalDialog : Window, INotifyPropertyChanged
     {
         private string _dialogTitle = "提示";
-        private string _messageText;
-        private string _inputText;
-        private string _inputLabel;
+        private string _messageText = string.Empty;
+        private string _inputText = string.Empty;
+        private string _inputLabel = string.Empty;
         private InputType _inputType = InputType.None;
         private List<DialogButton> _buttons = [];
 
@@ -36,7 +36,7 @@ namespace LLC_MOD_Toolbox
             get => _messageText;
             set
             {
-                _messageText = value;
+                _messageText = value ?? string.Empty;
                 OnPropertyChanged(nameof(MessageText));
                 OnPropertyChanged(nameof(MessageVisibility));
             }
@@ -47,7 +47,7 @@ namespace LLC_MOD_Toolbox
             get => _inputText;
             set
             {
-                _inputText = value;
+                _inputText = value ?? string.Empty;
                 OnPropertyChanged(nameof(InputText));
             }
         }
@@ -57,7 +57,7 @@ namespace LLC_MOD_Toolbox
             get => _inputLabel;
             set
             {
-                _inputLabel = value;
+                _inputLabel = value ?? string.Empty;
                 OnPropertyChanged(nameof(InputLabel));
                 OnPropertyChanged(nameof(InputLabelVisibility));
             }
@@ -109,8 +109,8 @@ namespace LLC_MOD_Toolbox
 
         #region 结果属性
 
-        public string InputResult { get; private set; }
-        public DialogButton ClickedButton { get; private set; }
+        public string? InputResult { get; private set; }
+        public DialogButton? ClickedButton { get; private set; }
 
         #endregion
 
@@ -229,7 +229,7 @@ namespace LLC_MOD_Toolbox
         #region 静态方法
 
         public static DialogResult ShowMessage(string message, string title = "提示",
-    List<DialogButton>? buttons = null, Window owner = null)
+    List<DialogButton>? buttons = null, Window? owner = null)
         {
             var dispatcher = Application.Current?.Dispatcher;
 
@@ -289,8 +289,8 @@ namespace LLC_MOD_Toolbox
         /// 显示输入对话框
         /// </summary>
         public static DialogResult ShowInput(string message, string title = "输入",
-            string inputLabel = null, InputType inputType = InputType.Text,
-            List<DialogButton> buttons = null, Window owner = null)
+            string? inputLabel = null, InputType inputType = InputType.Text,
+            List<DialogButton>? buttons = null, Window? owner = null)
         {
             if (buttons == null)
             {
@@ -316,7 +316,7 @@ namespace LLC_MOD_Toolbox
         /// <summary>
         /// 显示确认对话框
         /// </summary>
-        public static bool ShowConfirm(string message, string title = "确认", Window owner = null)
+        public static bool ShowConfirm(string message, string title = "确认", Window? owner = null)
         {
             var buttons = new List<DialogButton>
             {
@@ -331,7 +331,7 @@ namespace LLC_MOD_Toolbox
         /// <summary>
         /// 显示是/否/取消对话框
         /// </summary>
-        public static DialogResult ShowYesNoCancel(string message, string title = "选择", Window owner = null)
+        public static DialogResult ShowYesNoCancel(string message, string title = "选择", Window? owner = null)
         {
             var buttons = new List<DialogButton>
             {
@@ -364,7 +364,7 @@ namespace LLC_MOD_Toolbox
     /// </summary>
     public class DialogButton
     {
-        public DialogButton(string text, bool isDefault = false, bool isCancel = false, Func<string, bool> action = null)
+        public DialogButton(string text, bool isDefault = false, bool isCancel = false, Func<string?, bool>? action = null)
         {
             Text = text;
             IsDefault = isDefault;
@@ -379,7 +379,7 @@ namespace LLC_MOD_Toolbox
         /// <summary>
         /// 按钮点击时的自定义操作，返回true继续关闭对话框，返回false阻止关闭
         /// </summary>
-        public Func<string, bool> Action { get; set; }
+        public Func<string?, bool>? Action { get; set; }
     }
 
     /// <summary>
@@ -387,14 +387,14 @@ namespace LLC_MOD_Toolbox
     /// </summary>
     public class DialogResult
     {
-        public DialogResult(DialogButton button, string input)
+        public DialogResult(DialogButton? button, string? input)
         {
             Button = button;
             Input = input;
         }
 
-        public DialogButton Button { get; }
-        public string Input { get; }
+        public DialogButton? Button { get; }
+        public string? Input { get; }
 
         public bool IsSuccess => Button?.IsDefault == true;
         public bool IsCanceled => Button?.IsCancel == true;

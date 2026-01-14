@@ -45,6 +45,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
         <FontFamily x:Key="GlobalPreviewFont">/Fonts/#Source Han Sans CN</FontFamily>
         <sys:Double x:Key="GlobalPreviewFontSize">16</sys:Double>
         <sys:Double x:Key="GlobalPreviewSmallFontSize">12</sys:Double>
@@ -72,7 +73,7 @@
         <Image HorizontalAlignment="Left" Height="480" Margin="18,116,0,0" VerticalAlignment="Top" Width="162" Source="/Picture/ButtonBackground.png" Grid.RowSpan="2" Grid.ColumnSpan="2"/>
         <Image HorizontalAlignment="Left" Height="87" VerticalAlignment="Top" Width="960" Grid.ColumnSpan="3" Margin="0,13,0,0" Source="/Picture/TitleBar.png"/>
         <Image x:Name="MinimizeHover" HorizontalAlignment="Left" VerticalAlignment="Top" Opacity="0" IsHitTestVisible="False" Margin="573,16,0,0" Height="80" Width="81" Panel.ZIndex="5" Source="/Picture/MinimizeHover.png" Grid.Column="2" />
-        <Button Grid.Column="2" HorizontalAlignment="Left" Margin="574,17,0,0" VerticalAlignment="Top" Height="78" Width="80" Opacity="1" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" Style="{StaticResource NoHover}" Click="MinimizeButtonClick">
+        <Button Grid.Column="2" HorizontalAlignment="Left" Margin="574,17,0,0" VerticalAlignment="Top" Height="78" Width="80" Opacity="1" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" Style="{StaticResource NoHover}" Command="{Binding MinimizeCommand}">
             <Button.Content>
                 <Image Height="78" Width="80" Source="/Picture/Minimize.png" />
             </Button.Content>
@@ -98,7 +99,7 @@
             </Button.Triggers>
         </Button>
         <Image x:Name="CloseHover" HorizontalAlignment="Left" VerticalAlignment="Top" Opacity="0" IsHitTestVisible="False" Margin="661,16,0,0" Height="80" Width="81" Panel.ZIndex="5" Source="/Picture/MinimizeHover.png" Grid.Column="2" />
-        <Button Grid.Column="2" HorizontalAlignment="Left" Margin="662,17,0,0" VerticalAlignment="Top" Height="78" Width="80" Opacity="1" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" Click="CloseButtonClick" Style="{StaticResource NoHover}">
+        <Button Grid.Column="2" HorizontalAlignment="Left" Margin="662,17,0,0" VerticalAlignment="Top" Height="78" Width="80" Opacity="1" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" Command="{Binding CloseCommand}" Style="{StaticResource NoHover}">
             <Button.Content>
                 <Image Height="78" Width="80" Source="/Picture/Close.png" />
             </Button.Content>
@@ -134,7 +135,7 @@
         <Image x:Name="FontReplaceHover" IsHitTestVisible="False" Panel.ZIndex="5" Grid.Column="2" Opacity="0" HorizontalAlignment="Left" Height="46" Margin="252,4,0,0" Grid.Row="1" VerticalAlignment="Top" Width="134" Source="/Picture/ControlBoardHover.png"/>
         <Image x:Name="ReplaceInstallHover" IsHitTestVisible="False" Panel.ZIndex="5" Grid.Column="2" Opacity="0" HorizontalAlignment="Left" Height="46" Margin="400,4,0,0" Grid.Row="1" VerticalAlignment="Top" Width="134" Source="/Picture/ControlBoardHover.png"/>
         <Image x:Name="GachaSimHover" IsHitTestVisible="False" Panel.ZIndex="5" Grid.Column="2" Opacity="0" HorizontalAlignment="Left" Height="46" Margin="548,4,0,0" Grid.Row="1" VerticalAlignment="Top" Width="134" Source="/Picture/ControlBoardHover.png"/>
-        <Button x:Name="AutoInstallButton" Grid.Column="2" Visibility="Collapsed" Content="自动安装" HorizontalAlignment="Left" Margin="122,4,0,0" Grid.Row="1" VerticalAlignment="Top" Height="40" Width="101" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" FontFamily="/Fonts/#Source Han Sans CN" FontWeight="Bold" Foreground="#FFFFEED4" FontSize="18" Style="{StaticResource NoHover}" Click="AutoInstallButtonClick">
+        <Button x:Name="AutoInstallButton" Grid.Column="2" Visibility="Collapsed" Content="自动安装" HorizontalAlignment="Left" Margin="122,4,0,0" Grid.Row="1" VerticalAlignment="Top" Height="40" Width="101" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" FontFamily="/Fonts/#Source Han Sans CN" FontWeight="Bold" Foreground="#FFFFEED4" FontSize="18" Style="{StaticResource NoHover}" Command="{Binding NavigateToAutoInstallCommand}">
             <Button.Triggers>
                 <EventTrigger RoutedEvent="Button.MouseEnter">
                     <BeginStoryboard>
@@ -156,7 +157,7 @@
                 </EventTrigger>
             </Button.Triggers>
         </Button>
-        <Button x:Name="FontReplaceButton" Grid.Column="2" Visibility="Collapsed" Content="字体替换" HorizontalAlignment="Left" Margin="271,4,0,0" Grid.Row="1" VerticalAlignment="Top" Height="40" Width="101" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" FontFamily="/Fonts/#Source Han Sans CN" FontWeight="Bold" Foreground="#FFFFEED4" FontSize="18" Style="{StaticResource NoHover}" Click="FontReplaceButtonClick">
+        <Button x:Name="FontReplaceButton" Grid.Column="2" Visibility="Collapsed" Content="字体替换" HorizontalAlignment="Left" Margin="271,4,0,0" Grid.Row="1" VerticalAlignment="Top" Height="40" Width="101" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" FontFamily="/Fonts/#Source Han Sans CN" FontWeight="Bold" Foreground="#FFFFEED4" FontSize="18" Style="{StaticResource NoHover}" Command="{Binding NavigateToFontReplaceCommand}">
             <Button.Triggers>
                 <EventTrigger RoutedEvent="Button.MouseEnter">
                     <BeginStoryboard>
@@ -178,7 +179,7 @@
                 </EventTrigger>
             </Button.Triggers>
         </Button>
-        <Button x:Name="GachaSimInstallButton" Grid.Column="2" Visibility="Collapsed" Content="抽卡模拟器" HorizontalAlignment="Left" Margin="564,5,0,0" Grid.Row="1" VerticalAlignment="Top" Height="40" Width="102" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" FontFamily="/Fonts/#Source Han Sans CN" FontWeight="Bold" Foreground="#FFFFEED4" FontSize="18" Style="{StaticResource NoHover}" Click="GachaSimButtonClick">
+        <Button x:Name="GachaSimInstallButton" Grid.Column="2" Visibility="Collapsed" Content="抽卡模拟器" HorizontalAlignment="Left" Margin="564,5,0,0" Grid.Row="1" VerticalAlignment="Top" Height="40" Width="102" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" FontFamily="/Fonts/#Source Han Sans CN" FontWeight="Bold" Foreground="#FFFFEED4" FontSize="18" Style="{StaticResource NoHover}" Command="{Binding NavigateToGachaSimCommand}">
             <Button.Triggers>
                 <EventTrigger RoutedEvent="Button.MouseEnter">
                     <BeginStoryboard>
@@ -200,7 +201,7 @@
                 </EventTrigger>
             </Button.Triggers>
         </Button>
-        <Button x:Name="InstallOption" Grid.Column="1" Content="安   装" HorizontalAlignment="Left" Margin="10,55,0,0" Grid.Row="1" VerticalAlignment="Top" Height="33" Width="127" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" FontFamily="/Fonts/#lianmengqiyilushuaizhengruiheiti" FontWeight="Regular" FontSize="20" Foreground="#FFFFEED4" Style="{StaticResource NoHover}" Click="InstallOptionClick">
+        <Button x:Name="InstallOption" Grid.Column="1" Content="安   装" HorizontalAlignment="Left" Margin="10,55,0,0" Grid.Row="1" VerticalAlignment="Top" Height="33" Width="127" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" FontFamily="/Fonts/#lianmengqiyilushuaizhengruiheiti" FontWeight="Regular" FontSize="20" Foreground="#FFFFEED4" Style="{StaticResource NoHover}" Command="{Binding NavigateToInstallCommand}">
             <Button.Triggers>
                 <EventTrigger RoutedEvent="Button.MouseEnter">
                     <BeginStoryboard>
@@ -222,7 +223,7 @@
                 </EventTrigger>
             </Button.Triggers>
         </Button>
-        <Button x:Name="LinkOption" Grid.Column="1" Content="链   接" HorizontalAlignment="Left" Margin="10,105,0,0" Grid.Row="1" VerticalAlignment="Top" Height="33" Width="127" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" FontFamily="/Fonts/#lianmengqiyilushuaizhengruiheiti" FontWeight="Regular" FontSize="20" Foreground="#FFFFEED4" Style="{StaticResource NoHover}" Click="LinkOptionClick">
+        <Button x:Name="LinkOption" Grid.Column="1" Content="链   接" HorizontalAlignment="Left" Margin="10,105,0,0" Grid.Row="1" VerticalAlignment="Top" Height="33" Width="127" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" FontFamily="/Fonts/#lianmengqiyilushuaizhengruiheiti" FontWeight="Regular" FontSize="20" Foreground="#FFFFEED4" Style="{StaticResource NoHover}" Command="{Binding NavigateToLinkCommand}">
             <Button.Triggers>
                 <EventTrigger RoutedEvent="Button.MouseEnter">
                     <BeginStoryboard>
@@ -244,7 +245,7 @@
                 </EventTrigger>
             </Button.Triggers>
         </Button>
-        <Button x:Name="GreytestOption" Grid.Column="1" Content="灰度测试" HorizontalAlignment="Left" Margin="10,154,0,0" Grid.Row="1" VerticalAlignment="Top" Height="33" Width="127" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" FontFamily="/Fonts/#lianmengqiyilushuaizhengruiheiti" FontWeight="Regular" FontSize="20" Foreground="#FFFFEED4" Style="{StaticResource NoHover}" Click="GreytestOptionClick">
+        <Button x:Name="GreytestOption" Grid.Column="1" Content="灰度测试" HorizontalAlignment="Left" Margin="10,154,0,0" Grid.Row="1" VerticalAlignment="Top" Height="33" Width="127" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" FontFamily="/Fonts/#lianmengqiyilushuaizhengruiheiti" FontWeight="Regular" FontSize="20" Foreground="#FFFFEED4" Style="{StaticResource NoHover}" Command="{Binding NavigateToGreytestCommand}">
             <Button.Triggers>
                 <EventTrigger RoutedEvent="Button.MouseEnter">
                     <BeginStoryboard>
@@ -266,7 +267,7 @@
                 </EventTrigger>
             </Button.Triggers>
         </Button>
-        <Button x:Name="SettingOption" Grid.Column="1" Content="设   置" HorizontalAlignment="Left" Margin="10,205,0,0" Grid.Row="1" VerticalAlignment="Top" Height="33" Width="127" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" FontFamily="/Fonts/#lianmengqiyilushuaizhengruiheiti" FontWeight="Regular" FontSize="20" Foreground="#FFFFEED4" Style="{StaticResource NoHover}" Click="SettingsOptionClick">
+        <Button x:Name="SettingOption" Grid.Column="1" Content="设   置" HorizontalAlignment="Left" Margin="10,205,0,0" Grid.Row="1" VerticalAlignment="Top" Height="33" Width="127" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" FontFamily="/Fonts/#lianmengqiyilushuaizhengruiheiti" FontWeight="Regular" FontSize="20" Foreground="#FFFFEED4" Style="{StaticResource NoHover}" Command="{Binding NavigateToSettingsCommand}">
             <Button.Triggers>
                 <EventTrigger RoutedEvent="Button.MouseEnter">
                     <BeginStoryboard>
@@ -288,7 +289,7 @@
                 </EventTrigger>
             </Button.Triggers>
         </Button>
-        <Button x:Name="AboutOption" Grid.Column="1" Content="关   于" HorizontalAlignment="Left" Margin="10,255,0,0" Grid.Row="1" VerticalAlignment="Top" Height="33" Width="127" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" FontFamily="/Fonts/#lianmengqiyilushuaizhengruiheiti" FontWeight="Regular" FontSize="20" Foreground="#FFFFEED4" Style="{StaticResource NoHover}" Click="AboutOptionClick">
+        <Button x:Name="AboutOption" Grid.Column="1" Content="关   于" HorizontalAlignment="Left" Margin="10,255,0,0" Grid.Row="1" VerticalAlignment="Top" Height="33" Width="127" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" FontFamily="/Fonts/#lianmengqiyilushuaizhengruiheiti" FontWeight="Regular" FontSize="20" Foreground="#FFFFEED4" Style="{StaticResource NoHover}" Command="{Binding NavigateToAboutCommand}">
             <Button.Triggers>
                 <EventTrigger RoutedEvent="Button.MouseEnter">
                     <BeginStoryboard>
@@ -310,7 +311,7 @@
                 </EventTrigger>
             </Button.Triggers>
         </Button>
-        <Button x:Name="EEOption" Visibility="Collapsed" IsHitTestVisible="False" Grid.Column="1" Content="画   廊" HorizontalAlignment="Left" Margin="10,305,0,0" Grid.Row="1" VerticalAlignment="Top" Height="33" Width="127" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" FontFamily="/Fonts/#lianmengqiyilushuaizhengruiheiti" FontWeight="Regular" FontSize="20" Foreground="#FFFFEED4" Style="{StaticResource NoHover}" Click="EEOptionClick">
+        <Button x:Name="EEOption" Visibility="Collapsed" IsHitTestVisible="False" Grid.Column="1" Content="画   廊" HorizontalAlignment="Left" Margin="10,305,0,0" Grid.Row="1" VerticalAlignment="Top" Height="33" Width="127" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" FontFamily="/Fonts/#lianmengqiyilushuaizhengruiheiti" FontWeight="Regular" FontSize="20" Foreground="#FFFFEED4" Style="{StaticResource NoHover}" Command="{Binding NavigateToEECommand}">
             <Button.Triggers>
                 <EventTrigger RoutedEvent="Button.MouseEnter">
                     <BeginStoryboard>
@@ -340,7 +341,7 @@ From="1" To="0" Duration="0:0:0.3"/>
         <Image x:Name="EEHover" HorizontalAlignment="Left" IsHitTestVisible="False" Opacity="0" Height="49" Margin="15,296,0,0" Grid.Row="1" VerticalAlignment="Top" Width="168" Source="/Picture/ButtonHover.png" Grid.ColumnSpan="3"/>
         <Grid x:Name="AutoInstallPage" Visibility="Visible" Panel.ZIndex="5" Margin="62,55,54,32" Grid.Column="2" Grid.Row="1">
 
-            <Button x:Name="AutoInstallStartButton" HorizontalAlignment="Center" Margin="0,151,0,0" VerticalAlignment="Top" Panel.ZIndex="3" Width="196" Height="70" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" Style="{StaticResource NoHover}" Click="InstallButtonClick">
+            <Button x:Name="AutoInstallStartButton" HorizontalAlignment="Center" Margin="0,151,0,0" VerticalAlignment="Top" Panel.ZIndex="3" Width="196" Height="70" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" Style="{StaticResource NoHover}" Command="{Binding InstallCommand}">
                 <Button.Content>
                     <Image x:Name="AutoInstallStartButtonIMG" Height="70" Width="195" Source="/Picture/Install.png" />
                 </Button.Content>
@@ -413,10 +414,16 @@ TextAlignment="Right"
         <Grid x:Name="FontReplacePage" Visibility="Collapsed" Panel.ZIndex="5" Margin="62,55,54,32" Grid.Column="2" Grid.Row="1">
             <Label Content="对汉化的字体进行替换。" HorizontalAlignment="Center" Margin="0,15,0,0" VerticalAlignment="Top" Height="36" Width="644" FontSize="20" Foreground="#FFFFEED4" FontFamily="/Fonts/#Source Han Sans CN" FontWeight="Medium" />
             <Label Content="字体路径" HorizontalAlignment="Center" Margin="0,51,0,0" VerticalAlignment="Top" Height="36" Width="644" FontSize="16" Foreground="#FFFFEED4" FontFamily="/Fonts/#Source Han Sans CN" FontWeight="Medium" />
-            <TextBox x:Name="FontReplaceTextBox" HorizontalAlignment="Left" Margin="91,56,0,0" TextWrapping="Wrap" Text="输入字体路径" VerticalAlignment="Top" Width="446" Height="26" FontSize="16" FontFamily="/Fonts/#Source Han Sans CN" FontWeight="Medium"/>
+            <TextBox x:Name="FontReplaceTextBox"
+                     HorizontalAlignment="Left" Margin="91,56,0,0" TextWrapping="Wrap"
+                     Text="{Binding FontFilePath, UpdateSourceTrigger=PropertyChanged}"
+                     VerticalAlignment="Top" Width="446" Height="26" FontSize="16" FontFamily="/Fonts/#Source Han Sans CN" FontWeight="Medium"/>
             <Label Content="字体大小" HorizontalAlignment="Center" Margin="0,85,0,0" VerticalAlignment="Top" Height="36" Width="644" FontSize="16" Foreground="#FFFFEED4" FontFamily="/Fonts/#Source Han Sans CN" FontWeight="Medium" />
-            <TextBox x:Name="FontSizeTextBox" HorizontalAlignment="Left" Margin="91,90,0,0" TextWrapping="Wrap" Text="16" VerticalAlignment="Top" Width="446" Height="26" FontSize="16" FontFamily="/Fonts/#Source Han Sans CN" FontWeight="Medium"/>
-            <Button HorizontalAlignment="Left" Margin="554,54,0,0" VerticalAlignment="Top" Height="28" Width="74" Style="{StaticResource NoHover}" Background="#FFFFEED4" Click="ExploreFontButtonClick">
+            <TextBox x:Name="FontSizeTextBox"
+                     HorizontalAlignment="Left" Margin="91,90,0,0" TextWrapping="Wrap"
+                     Text="{Binding FontSize, UpdateSourceTrigger=PropertyChanged}"
+                     VerticalAlignment="Top" Width="446" Height="26" FontSize="16" FontFamily="/Fonts/#Source Han Sans CN" FontWeight="Medium"/>
+            <Button HorizontalAlignment="Left" Margin="554,54,0,0" VerticalAlignment="Top" Height="28" Width="74" Style="{StaticResource NoHover}" Background="#FFFFEED4" Command="{Binding BrowseFontCommand}">
                 <Button.Clip>
                     <RectangleGeometry Rect="0,0,74,28" RadiusX="3" RadiusY="3"/>
                 </Button.Clip>
@@ -465,7 +472,7 @@ From="1" To="0" Duration="0:0:0.3"/>
             <Label x:Name="PreviewText" HorizontalAlignment="Center" Margin="0,117,0,0" VerticalAlignment="Top" Height="208" Width="644" Foreground="#FFFFEED4" FontFamily="/Fonts/#Source Han Sans CN" FontWeight="Medium">
                 <TextBlock FontSize="13.5" Text="" TextWrapping="Wrap" Height="234"/>
             </Label>
-            <Button HorizontalAlignment="Left" Margin="20,334,0,0" VerticalAlignment="Top" Height="28" Width="74" Style="{StaticResource NoHover}" Background="#FFFFEED4" Click="PreviewFontButtonClick">
+            <Button HorizontalAlignment="Left" Margin="20,334,0,0" VerticalAlignment="Top" Height="28" Width="74" Style="{StaticResource NoHover}" Background="#FFFFEED4" Command="{Binding PreviewFontCommand}">
                 <Button.Clip>
                     <RectangleGeometry Rect="0,0,74,28" RadiusX="3" RadiusY="3"/>
                 </Button.Clip>
@@ -492,7 +499,7 @@ From="1" To="0" Duration="0:0:0.3"/>
             </Button>
             <Label Content="预览字体" HorizontalAlignment="Left" IsHitTestVisible="False" Margin="20,330,0,0" VerticalAlignment="Top" Height="38" Width="74" FontSize="16" Foreground="Black" FontFamily="/Fonts/#Source Han Sans CN" FontWeight="Heavy"/>
             <Image x:Name="PreviewFontHover" Panel.ZIndex="5" IsHitTestVisible="False" Opacity="0" HorizontalAlignment="Left" Height="34" Margin="17,331,0,0" VerticalAlignment="Top" Width="80" Source="/Picture/SettingButtonHover.png"/>
-            <Button HorizontalAlignment="Left" Margin="129,334,0,0" VerticalAlignment="Top" Height="28" Width="74" Style="{StaticResource NoHover}" Background="#FFFFEED4" Click="ChangeFontButtonClick">
+            <Button HorizontalAlignment="Left" Margin="129,334,0,0" VerticalAlignment="Top" Height="28" Width="74" Style="{StaticResource NoHover}" Background="#FFFFEED4" Command="{Binding ReplaceFontCommand}">
                 <Button.Clip>
                     <RectangleGeometry Rect="0,0,74,28" RadiusX="3" RadiusY="3"/>
                 </Button.Clip>
@@ -519,7 +526,7 @@ From="1" To="0" Duration="0:0:0.3"/>
             </Button>
             <Label Content="切换字体" HorizontalAlignment="Left" IsHitTestVisible="False" Margin="129,330,0,0" VerticalAlignment="Top" Height="38" Width="74" FontSize="16" Foreground="Black" FontFamily="/Fonts/#Source Han Sans CN" FontWeight="Heavy"/>
             <Image x:Name="ChangeFontHover" Panel.ZIndex="5" IsHitTestVisible="False" Opacity="0" HorizontalAlignment="Left" Height="34" Margin="126,331,0,0" VerticalAlignment="Top" Width="80" Source="/Picture/SettingButtonHover.png"/>
-            <Button HorizontalAlignment="Left" Margin="240,334,0,0" VerticalAlignment="Top" Height="28" Width="74" Style="{StaticResource NoHover}" Background="#FFFFEED4" Click="RestoreFontButtonClick">
+            <Button HorizontalAlignment="Left" Margin="240,334,0,0" VerticalAlignment="Top" Height="28" Width="74" Style="{StaticResource NoHover}" Background="#FFFFEED4" Command="{Binding RestoreFontCommand}">
                 <Button.Clip>
                     <RectangleGeometry Rect="0,0,74,28" RadiusX="3" RadiusY="3"/>
                 </Button.Clip>
@@ -549,7 +556,7 @@ From="1" To="0" Duration="0:0:0.3"/>
             <Image HorizontalAlignment="Left" Height="100" Margin="57,170,0,0" VerticalAlignment="Top" Width="100"/>
         </Grid>
         <Grid x:Name="LinkPage" Visibility="Collapsed" Panel.ZIndex="5" Margin="62,55,54,32" Grid.Column="2" Grid.Row="1">
-            <Button x:Name="LinkButton1" HorizontalAlignment="Left" Margin="37,40,0,0" VerticalAlignment="Top" Height="40" Width="262" Opacity="1" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" Style="{StaticResource NoHover}" Click="LinkButtonClick">
+            <Button x:Name="LinkButton1" HorizontalAlignment="Left" Margin="37,40,0,0" VerticalAlignment="Top" Height="40" Width="262" Opacity="1" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" Style="{StaticResource NoHover}" Command="{Binding OpenUrlCommand}" CommandParameter="{Binding ElementName=LinkButton1, Path=Name}">
                 <Button.Content>
                     <Image Height="40" Width="262" Source="/Picture/LinkBT.png"/>
                 </Button.Content>
@@ -574,7 +581,7 @@ From="1" To="0" Duration="0:0:0.3"/>
                     </EventTrigger>
                 </Button.Triggers>
             </Button>
-            <Button x:Name="LinkButton3" Grid.Column="2" HorizontalAlignment="Left" Margin="37,85,0,0" VerticalAlignment="Top" Height="40" Width="262" Opacity="1" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" Style="{StaticResource NoHover}" Click="LinkButtonClick">
+            <Button x:Name="LinkButton3" Grid.Column="2" HorizontalAlignment="Left" Margin="37,85,0,0" VerticalAlignment="Top" Height="40" Width="262" Opacity="1" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" Style="{StaticResource NoHover}" Command="{Binding OpenUrlCommand}" CommandParameter="{Binding ElementName=LinkButton3, Path=Name}">
                 <Button.Content>
                     <Image Height="40" Width="262" Source="/Picture/LinkBT.png"/>
                 </Button.Content>
@@ -599,7 +606,7 @@ From="1" To="0" Duration="0:0:0.3"/>
                     </EventTrigger>
                 </Button.Triggers>
             </Button>
-            <Button x:Name="LinkButton5" Grid.Column="2" HorizontalAlignment="Left" Margin="37,130,0,0" VerticalAlignment="Top" Height="40" Width="262" Opacity="1" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" Style="{StaticResource NoHover}" Click="LinkButtonClick">
+            <Button x:Name="LinkButton5" Grid.Column="2" HorizontalAlignment="Left" Margin="37,130,0,0" VerticalAlignment="Top" Height="40" Width="262" Opacity="1" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" Style="{StaticResource NoHover}" Command="{Binding OpenUrlCommand}" CommandParameter="{Binding ElementName=LinkButton5, Path=Name}">
                 <Button.Content>
                     <Image Height="40" Width="262" Source="/Picture/LinkBT.png"/>
                 </Button.Content>
@@ -624,7 +631,7 @@ From="1" To="0" Duration="0:0:0.3"/>
                     </EventTrigger>
                 </Button.Triggers>
             </Button>
-            <Button x:Name="LinkButton7" Grid.Column="2" HorizontalAlignment="Left" Margin="37,175,0,0" VerticalAlignment="Top" Height="40" Width="262" Opacity="1" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" Style="{StaticResource NoHover}" Click="LinkButtonClick">
+            <Button x:Name="LinkButton7" Grid.Column="2" HorizontalAlignment="Left" Margin="37,175,0,0" VerticalAlignment="Top" Height="40" Width="262" Opacity="1" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" Style="{StaticResource NoHover}" Command="{Binding OpenUrlCommand}" CommandParameter="{Binding ElementName=LinkButton7, Path=Name}">
                 <Button.Content>
                     <Image Height="40" Width="262" Source="/Picture/LinkBT.png"/>
                 </Button.Content>
@@ -649,7 +656,7 @@ From="1" To="0" Duration="0:0:0.3"/>
                     </EventTrigger>
                 </Button.Triggers>
             </Button>
-            <Button x:Name="LinkButton9" Grid.Column="2" HorizontalAlignment="Left" Margin="37,220,0,0" VerticalAlignment="Top" Height="40" Width="262" Opacity="1" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" Style="{StaticResource NoHover}" Click="LinkButtonClick">
+            <Button x:Name="LinkButton9" Grid.Column="2" HorizontalAlignment="Left" Margin="37,220,0,0" VerticalAlignment="Top" Height="40" Width="262" Opacity="1" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" Style="{StaticResource NoHover}" Command="{Binding OpenUrlCommand}" CommandParameter="{Binding ElementName=LinkButton9, Path=Name}">
                 <Button.Content>
                     <Image Height="40" Width="262" Source="/Picture/LinkBT.png"/>
                 </Button.Content>
@@ -684,7 +691,7 @@ From="1" To="0" Duration="0:0:0.3"/>
                     <Image Height="40" Width="262" Source="/Picture/LinkBT.png"/>
                 </Button.Content>
             </Button>
-            <Button x:Name="LinkButton2" Grid.Column="2" HorizontalAlignment="Left" Margin="352,40,0,0" VerticalAlignment="Top" Height="40" Width="262" Opacity="1" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" Style="{StaticResource NoHover}" Click="LinkButtonClick">
+            <Button x:Name="LinkButton2" Grid.Column="2" HorizontalAlignment="Left" Margin="352,40,0,0" VerticalAlignment="Top" Height="40" Width="262" Opacity="1" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" Style="{StaticResource NoHover}" Command="{Binding OpenUrlCommand}" CommandParameter="{Binding ElementName=LinkButton2, Path=Name}">
                 <Button.Content>
                     <Image Height="40" Width="262" Source="/Picture/LinkBT.png"/>
                 </Button.Content>
@@ -709,7 +716,7 @@ From="1" To="0" Duration="0:0:0.3"/>
                     </EventTrigger>
                 </Button.Triggers>
             </Button>
-            <Button x:Name="LinkButton4" Grid.Column="2" HorizontalAlignment="Left" Margin="352,85,0,0" VerticalAlignment="Top" Height="40" Width="262" Opacity="1" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" Style="{StaticResource NoHover}" Click="LinkButtonClick">
+            <Button x:Name="LinkButton4" Grid.Column="2" HorizontalAlignment="Left" Margin="352,85,0,0" VerticalAlignment="Top" Height="40" Width="262" Opacity="1" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" Style="{StaticResource NoHover}" Command="{Binding OpenUrlCommand}" CommandParameter="{Binding ElementName=LinkButton4, Path=Name}">
                 <Button.Content>
                     <Image Height="40" Width="262" Source="/Picture/LinkBT.png"/>
                 </Button.Content>
@@ -734,7 +741,7 @@ From="1" To="0" Duration="0:0:0.3"/>
                     </EventTrigger>
                 </Button.Triggers>
             </Button>
-            <Button x:Name="LinkButton6" Grid.Column="2" HorizontalAlignment="Left" Margin="352,130,0,0" VerticalAlignment="Top" Height="40" Width="262" Opacity="1" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" Style="{StaticResource NoHover}" Click="LinkButtonClick">
+            <Button x:Name="LinkButton6" Grid.Column="2" HorizontalAlignment="Left" Margin="352,130,0,0" VerticalAlignment="Top" Height="40" Width="262" Opacity="1" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" Style="{StaticResource NoHover}" Command="{Binding OpenUrlCommand}" CommandParameter="{Binding ElementName=LinkButton6, Path=Name}">
                 <Button.Content>
                     <Image Height="40" Width="262" Source="/Picture/LinkBT.png"/>
                 </Button.Content>
@@ -759,7 +766,7 @@ From="1" To="0" Duration="0:0:0.3"/>
                     </EventTrigger>
                 </Button.Triggers>
             </Button>
-            <Button x:Name="LinkButton8" Grid.Column="2" HorizontalAlignment="Left" Margin="352,175,0,0" VerticalAlignment="Top" Height="40" Width="262" Opacity="1" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" Style="{StaticResource NoHover}" Click="LinkButtonClick">
+            <Button x:Name="LinkButton8" Grid.Column="2" HorizontalAlignment="Left" Margin="352,175,0,0" VerticalAlignment="Top" Height="40" Width="262" Opacity="1" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" Style="{StaticResource NoHover}" Command="{Binding OpenUrlCommand}" CommandParameter="{Binding ElementName=LinkButton8, Path=Name}">
                 <Button.Content>
                     <Image Height="40" Width="262" Source="/Picture/LinkBT.png"/>
                 </Button.Content>
@@ -784,7 +791,7 @@ From="1" To="0" Duration="0:0:0.3"/>
                     </EventTrigger>
                 </Button.Triggers>
             </Button>
-            <Button x:Name="LinkButton10" Grid.Column="2" HorizontalAlignment="Left" Margin="352,220,0,0" VerticalAlignment="Top" Height="40" Width="262" Opacity="1" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" Style="{StaticResource NoHover}" Click="LinkButtonClick">
+            <Button x:Name="LinkButton10" Grid.Column="2" HorizontalAlignment="Left" Margin="352,220,0,0" VerticalAlignment="Top" Height="40" Width="262" Opacity="1" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" Style="{StaticResource NoHover}" Command="{Binding OpenUrlCommand}" CommandParameter="{Binding ElementName=LinkButton10, Path=Name}">
                 <Button.Content>
                     <Image Height="40" Width="262" Source="/Picture/LinkBT.png"/>
                 </Button.Content>
@@ -846,9 +853,12 @@ From="1" To="0" Duration="0:0:0.3"/>
             </Label>
             <Image HorizontalAlignment="Left" Height="10" Margin="10,140,0,0" VerticalAlignment="Top" Width="626" Source="/Picture/NormalLine.png"/>
             <Label Content="秘钥" HorizontalAlignment="Left" Margin="18,162,0,0" VerticalAlignment="Top" FontSize="20" Foreground="#FFFFEED4" FontFamily="/Fonts/#Source Han Sans CN" FontWeight="Bold"/>
-            <TextBox x:Name="GreytestTokenBox" HorizontalAlignment="Left" Margin="87,169,0,0" TextWrapping="Wrap" Text="请输入秘钥" VerticalAlignment="Top" Width="539" Height="25" FontSize="16" FontFamily="/Fonts/#Source Han Sans CN" FontWeight="Medium"/>
+            <TextBox x:Name="GreytestTokenBox"
+                     HorizontalAlignment="Left" Margin="87,169,0,0" TextWrapping="Wrap"
+                     Text="{Binding Token, UpdateSourceTrigger=PropertyChanged}"
+                     VerticalAlignment="Top" Width="539" Height="25" FontSize="16" FontFamily="/Fonts/#Source Han Sans CN" FontWeight="Medium"/>
             <Image x:Name="GreytestButtonHover" Panel.ZIndex="5" IsHitTestVisible="False" Opacity="0" HorizontalAlignment="Left" Height="34" Margin="548,199,0,0" VerticalAlignment="Top" Width="80" Source="/Picture/SettingButtonHover.png"/>
-            <Button HorizontalAlignment="Left" Margin="551,202,0,0" VerticalAlignment="Top" Height="28" Width="74" Style="{StaticResource NoHover}" Background="#FFFFEED4" Click="StartGreytestButtonClick">
+            <Button HorizontalAlignment="Left" Margin="551,202,0,0" VerticalAlignment="Top" Height="28" Width="74" Style="{StaticResource NoHover}" Background="#FFFFEED4" Command="{Binding ValidateTokenCommand}">
                 <Button.Clip>
                     <RectangleGeometry Rect="0,0,74,28" RadiusX="3" RadiusY="3"/>
                 </Button.Clip>
@@ -875,7 +885,7 @@ From="1" To="0" Duration="0:0:0.3"/>
             </Button>
             <Label Content="校验" HorizontalAlignment="Left" IsHitTestVisible="False" Margin="568,199,0,0" VerticalAlignment="Top" Height="38" Width="52" FontSize="16" Foreground="Black" FontFamily="/Fonts/#Source Han Sans CN" FontWeight="Heavy"/>
             <Image x:Name="GreytestInfoButtonHover" Panel.ZIndex="5" IsHitTestVisible="False" Opacity="0" HorizontalAlignment="Left" Height="34" Margin="447,199,0,0" VerticalAlignment="Top" Width="80" Source="/Picture/SettingButtonHover.png"/>
-            <Button HorizontalAlignment="Left" Margin="450,202,0,0" VerticalAlignment="Top" Height="28" Width="74" Style="{StaticResource NoHover}" Background="#FFFFEED4" Click="GreytestInfoButtonClick">
+            <Button HorizontalAlignment="Left" Margin="450,202,0,0" VerticalAlignment="Top" Height="28" Width="74" Style="{StaticResource NoHover}" Background="#FFFFEED4" Command="{Binding ShowTokenInfoCommand}">
                 <Button.Clip>
                     <RectangleGeometry Rect="0,0,74,28" RadiusX="3" RadiusY="3"/>
                 </Button.Clip>
@@ -904,13 +914,32 @@ From="1" To="0" Duration="0:0:0.3"/>
         </Grid>
         <Grid x:Name="SettingsPage" Visibility="Collapsed" Panel.ZIndex="5" Margin="62,55,54,32" Grid.Column="2" Grid.Row="1">
             <Label Content="切换节点" HorizontalAlignment="Left" Margin="100,28,0,0" VerticalAlignment="Top" Height="41" Width="494" FontSize="22" Foreground="#FFFFEED4" FontFamily="/Fonts/#Source Han Sans CN" FontWeight="Medium"/>
-            <ComboBox x:Name="NodeCombobox" Margin="304,35,70,330" FontFamily="/Fonts/#Source Han Sans CN" FontWeight="Medium" Foreground="Black" FontSize="16" SelectionChanged="NodeComboboxSelectionChanged" >
+            <ComboBox x:Name="NodeCombobox"
+                      Margin="304,35,70,330"
+                      FontFamily="/Fonts/#Source Han Sans CN"
+                      FontWeight="Medium"
+                      Foreground="Black"
+                      FontSize="16"
+                      ItemsSource="{Binding NodeOptions}"
+                      SelectedItem="{Binding SelectedNode}"
+                      IsEnabled="{Binding AreNodeComboboxesEnabled}"
+                      SelectionChanged="NodeComboboxSelectionChanged" >
                 <ComboBox.Clip>
                     <RectangleGeometry Rect="0,0,290,31" RadiusX="3" RadiusY="3"/>
                 </ComboBox.Clip>
             </ComboBox>
             <Label Content="切换API节点" HorizontalAlignment="Left" Margin="100,80,0,0" VerticalAlignment="Top" Height="41" Width="494" FontSize="22" Foreground="#FFFFEED4" FontFamily="/Fonts/#Source Han Sans CN" FontWeight="Medium"/>
-            <ComboBox x:Name="APICombobox" Panel.ZIndex="5" Margin="304,87,70,278" FontFamily="/Fonts/#Source Han Sans CN" FontWeight="Medium" Foreground="Black" FontSize="16" SelectionChanged="APIComboboxSelectionChanged">
+            <ComboBox x:Name="APICombobox"
+                      Panel.ZIndex="5"
+                      Margin="304,87,70,278"
+                      FontFamily="/Fonts/#Source Han Sans CN"
+                      FontWeight="Medium"
+                      Foreground="Black"
+                      FontSize="16"
+                      ItemsSource="{Binding ApiNodeOptions}"
+                      SelectedItem="{Binding SelectedApiNode}"
+                      IsEnabled="{Binding AreNodeComboboxesEnabled}"
+                      SelectionChanged="APIComboboxSelectionChanged">
                 <ComboBox.Clip>
                     <RectangleGeometry Rect="0,0,290,31" RadiusX="3" RadiusY="3"/>
                 </ComboBox.Clip>
@@ -918,7 +947,7 @@ From="1" To="0" Duration="0:0:0.3"/>
             <Label Content="卸载模组" HorizontalAlignment="Left" Margin="100,128,0,0" VerticalAlignment="Top" Height="41" Width="494" FontSize="22" Foreground="#FFFFEED4" FontFamily="/Fonts/#Source Han Sans CN" FontWeight="Medium"/>
             <Image HorizontalAlignment="Center" Height="249" VerticalAlignment="Center" Width="524" Source="/Picture/SettingsLine.png"/>
             <Image x:Name="UninstallHover" Panel.ZIndex="5" IsHitTestVisible="False" Opacity="0" HorizontalAlignment="Left" Height="34" Margin="511,131,0,0" VerticalAlignment="Top" Width="80" Source="/Picture/SettingButtonHover.png"/>
-            <Button HorizontalAlignment="Left" Margin="514,134,0,0" VerticalAlignment="Top" Height="28" Width="74" Style="{StaticResource NoHover}" Background="#FFFFEED4" Click="UninstallButtonClick">
+            <Button HorizontalAlignment="Left" Margin="514,134,0,0" VerticalAlignment="Top" Height="28" Width="74" Style="{StaticResource NoHover}" Background="#FFFFEED4" Command="{Binding UninstallCommand}">
                 <Button.Clip>
                     <RectangleGeometry Rect="0,0,74,28" RadiusX="3" RadiusY="3"/>
                 </Button.Clip>
@@ -946,7 +975,7 @@ From="1" To="0" Duration="0:0:0.3"/>
             <Label Content="发送启动器到桌面" HorizontalAlignment="Left" Margin="100,276,0,0" VerticalAlignment="Top" Height="41" Width="494" FontSize="22" Foreground="#FFFFEED4" FontFamily="/Fonts/#Source Han Sans CN" FontWeight="Medium"/>
             <Image x:Name="SendMainHover" Panel.ZIndex="5" IsHitTestVisible="False" Opacity="0" HorizontalAlignment="Left" Height="34" Margin="511,281,0,0" VerticalAlignment="Top" Width="80" Source="/Picture/SettingButtonHover.png"/>
             <Image x:Name="SendHelpHover" Panel.ZIndex="5" IsHitTestVisible="False" Opacity="0" HorizontalAlignment="Left" Height="34" Margin="430,282,0,0" VerticalAlignment="Top" Width="80" Source="/Picture/SettingButtonHover.png"/>
-            <Button HorizontalAlignment="Left" Margin="514,284,0,0" VerticalAlignment="Top" Height="28" Width="74" Style="{StaticResource NoHover}" Background="#FFFFEED4" Click="LauncherSender">
+            <Button HorizontalAlignment="Left" Margin="514,284,0,0" VerticalAlignment="Top" Height="28" Width="74" Style="{StaticResource NoHover}" Background="#FFFFEED4" Command="{Binding SendLauncherCommand}">
                 <Button.Clip>
                     <RectangleGeometry Rect="0,0,74,28" RadiusX="3" RadiusY="3"/>
                 </Button.Clip>
@@ -971,7 +1000,7 @@ From="1" To="0" Duration="0:0:0.3"/>
                     </EventTrigger>
                 </Button.Triggers>
             </Button>
-            <Button HorizontalAlignment="Left" Margin="432,284,0,0" VerticalAlignment="Top" Height="28" Width="74" Style="{StaticResource NoHover}" Background="#FFFFEED4" Click="LauncherHelper">
+            <Button HorizontalAlignment="Left" Margin="432,284,0,0" VerticalAlignment="Top" Height="28" Width="74" Style="{StaticResource NoHover}" Background="#FFFFEED4" Command="{Binding OpenUrlCommand}" CommandParameter="https://www.zeroasso.top/docs/install/hotupdate">
                 <Button.Clip>
                     <RectangleGeometry Rect="0,0,74,28" RadiusX="3" RadiusY="3"/>
                 </Button.Clip>
@@ -996,12 +1025,12 @@ From="1" To="0" Duration="0:0:0.3"/>
                     </EventTrigger>
                 </Button.Triggers>
             </Button>
-            <Button HorizontalAlignment="Left" Margin="271,37,0,0" VerticalAlignment="Top" Height="28" Width="28" Style="{StaticResource NoHover}" Background="#FFFFEED4" Click="WhyShouldIUseThis">
+            <Button HorizontalAlignment="Left" Margin="271,37,0,0" VerticalAlignment="Top" Height="28" Width="28" Style="{StaticResource NoHover}" Background="#FFFFEED4" Command="{Binding OpenUrlCommand}" CommandParameter="https://www.zeroasso.top/docs/configuration/nodes">
                 <Button.Clip>
                     <RectangleGeometry Rect="0,0,28,28" RadiusX="14" RadiusY="14"/>
                 </Button.Clip>
             </Button>
-            <Button HorizontalAlignment="Left" Margin="271,88,0,0" VerticalAlignment="Top" Height="28" Width="28" Style="{StaticResource NoHover}" Background="#FFFFEED4" Click="WhyShouldIUseThis">
+            <Button HorizontalAlignment="Left" Margin="271,88,0,0" VerticalAlignment="Top" Height="28" Width="28" Style="{StaticResource NoHover}" Background="#FFFFEED4" Command="{Binding OpenUrlCommand}" CommandParameter="https://www.zeroasso.top/docs/configuration/nodes">
                 <Button.Clip>
                     <RectangleGeometry Rect="0,0,28,28" RadiusX="14" RadiusY="14"/>
                 </Button.Clip>
@@ -1012,14 +1041,14 @@ From="1" To="0" Duration="0:0:0.3"/>
             <Label Content="?" HorizontalAlignment="Left" IsHitTestVisible="False" Margin="276,34,0,0" VerticalAlignment="Top" Height="38" Width="52" FontSize="16" Foreground="Black" FontFamily="/Fonts/#Source Han Sans CN" FontWeight="Heavy"/>
             <Label Content="?" HorizontalAlignment="Left" IsHitTestVisible="False" Margin="276,85,0,0" VerticalAlignment="Top" Height="38" Width="52" FontSize="16" Foreground="Black" FontFamily="/Fonts/#Source Han Sans CN" FontWeight="Heavy"/>
             <Label Content="?" Panel.ZIndex="10" HorizontalAlignment="Left" IsHitTestVisible="False" Margin="398,281,0,0" VerticalAlignment="Top" Height="38" Width="52" FontSize="16" Foreground="Black" FontFamily="/Fonts/#Source Han Sans CN" FontWeight="Heavy"/>
-            <Button HorizontalAlignment="Left" Margin="394,284,0,0" VerticalAlignment="Top" Height="28" Width="28" Style="{StaticResource NoHover}" Background="#FFFFEED4" Click="HowToUseHotUpdate">
+            <Button HorizontalAlignment="Left" Margin="394,284,0,0" VerticalAlignment="Top" Height="28" Width="28" Style="{StaticResource NoHover}" Background="#FFFFEED4" Command="{Binding ShowHotUpdateHelpCommand}">
                 <Button.Clip>
                     <RectangleGeometry Rect="0,0,28,28" RadiusX="14" RadiusY="14"/>
                 </Button.Clip>
             </Button>
 
             <Label Content="配置Mirror酱" HorizontalAlignment="Left" Margin="100,229,0,0" VerticalAlignment="Top" Height="41" Width="494" FontSize="22" Foreground="#FFFFEED4" FontFamily="/Fonts/#Source Han Sans CN" FontWeight="Medium"/>
-            <Button HorizontalAlignment="Left" Margin="514,236,0,0" VerticalAlignment="Top" Height="28" Width="74" Style="{StaticResource NoHover}" Background="#FFFFEED4" Click="MirrorChyanConfigButtonSender">
+            <Button HorizontalAlignment="Left" Margin="514,236,0,0" VerticalAlignment="Top" Height="28" Width="74" Style="{StaticResource NoHover}" Background="#FFFFEED4" Command="{Binding ConfigureMirrorChyanCommand}">
                 <Button.Clip>
                     <RectangleGeometry Rect="0,0,74,28" RadiusX="3" RadiusY="3"/>
                 </Button.Clip>
@@ -1059,7 +1088,10 @@ From="1" To="0" Duration="0:0:0.3"/>
             <Image HorizontalAlignment="Left" Height="330" Margin="12,27,0,0" VerticalAlignment="Top" Width="630" Source="/Picture/GachaBackground.png"/>
             <Image Panel.ZIndex="5" IsHitTestVisible="False" HorizontalAlignment="Left" Height="30" Margin="43,325,0,0" VerticalAlignment="Top" Width="30" Source="/Picture/Lunacy.png"/>
             <Image x:Name="GachaButtonHover" Panel.ZIndex="5" IsHitTestVisible="False" Opacity="0" HorizontalAlignment="Left" Height="53" Margin="25,312,0,0" VerticalAlignment="Top" Width="125" Source="/Picture/SettingButtonHover.png"/>
-            <Button x:Name="InGachaButton" HorizontalAlignment="Left" Margin="31,318,0,0" VerticalAlignment="Top" Height="42" Width="113" Style="{StaticResource NoHover}" Background="#FFFFEED4" Click="InGachaButtonClick">
+            <Button x:Name="InGachaButton"
+                    HorizontalAlignment="Left" Margin="31,318,0,0" VerticalAlignment="Top" Height="42" Width="113"
+                    Style="{StaticResource NoHover}" Background="#FFFFEED4"
+                    Command="{Binding GachaCommand}">
                 <Button.Clip>
                     <RectangleGeometry Rect="0,0,113,42" RadiusX="3" RadiusY="3"/>
                 </Button.Clip>
@@ -1143,10 +1175,10 @@ From="1" To="0" Duration="0:0:0.3"/>
                 <TextBlock Text="存在未读的新公告！" Height="45"/>
             </Label>
             <Label HorizontalAlignment="Center" Margin="0,70,0,0" VerticalAlignment="Top" Height="269" Width="644" FontSize="15" Foreground="#FFFFEED4" FontFamily="/Fonts/#Source Han Sans CN" FontWeight="Medium">
-                <TextBlock x:Name="AnnoucementText" Text="测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测" TextWrapping="Wrap" Height="262" Width="634"/>
+                <TextBlock x:Name="AnnoucementText" Text="{Binding AnnouncementText}" TextWrapping="Wrap" Height="262" Width="634"/>
             </Label>
             <Image x:Name="AnnouncementButtonHover" Panel.ZIndex="5" IsHitTestVisible="False" Opacity="0" HorizontalAlignment="Center" Height="34" Margin="0,340,0,0" VerticalAlignment="Top" Width="80" Source="/Picture/SettingButtonHover.png"/>
-            <Button x:Name="AnnoucementButton" IsHitTestVisible="False" HorizontalAlignment="Center" Margin="0,343,0,0" VerticalAlignment="Top" Height="28" Width="74" Style="{StaticResource NoHover}" Background="#FFFFEED4" Click="AnnoucementButtonClick">
+            <Button x:Name="AnnoucementButton" IsHitTestVisible="{Binding IsCloseEnabled}" HorizontalAlignment="Center" Margin="0,343,0,0" VerticalAlignment="Top" Height="28" Width="74" Style="{StaticResource NoHover}" Background="#FFFFEED4" Command="{Binding CloseAnnouncementCommand}">
                 <Button.Clip>
                     <RectangleGeometry Rect="0,0,74,28" RadiusX="3" RadiusY="3"/>
                 </Button.Clip>
@@ -1173,11 +1205,11 @@ From="1" To="0" Duration="0:0:0.3"/>
             </Button>
             <Label x:Name="AnnoucementButtonText"  Content="已阅" HorizontalAlignment="Left" IsHitTestVisible="False" Margin="311,340,0,0" VerticalAlignment="Top" Height="38" Width="52" FontSize="16" Foreground="Black" FontFamily="/Fonts/#Source Han Sans CN" FontWeight="Heavy"/>
             <Label HorizontalAlignment="Left" Margin="377,341,0,0" VerticalAlignment="Top" Height="33" Width="264" FontSize="12" Foreground="#FFFFEED4" FontFamily="/Fonts/#Source Han Sans CN" FontWeight="Medium">
-                <TextBlock x:Name="AnnoucementButtonTip" Text="由于本次公告较为重要，您需要继续阅读N秒。" TextWrapping="Wrap" Height="23" Width="254"/>
+                <TextBlock x:Name="AnnoucementButtonTip" Text="{Binding CountdownText}" TextWrapping="Wrap" Height="23" Width="254"/>
             </Label>
         </Grid>
-        <Button Grid.Column="1" HorizontalAlignment="Center" Margin="0,350,0,0" Grid.Row="1" VerticalAlignment="Top" Height="41" Width="155" Style="{StaticResource BlackWhite}" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" MouseDoubleClick="WhiteBlackClickDouble" />
-        <Button Grid.Column="1" HorizontalAlignment="Center" Margin="0,400,0,0" Grid.Row="1" VerticalAlignment="Top" Height="41" Width="155" Style="{StaticResource BlackWhite}" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" MouseDoubleClick="WhiteBlackClickDouble"/>
+        <Button Grid.Column="1" HorizontalAlignment="Center" Margin="0,350,0,0" Grid.Row="1" VerticalAlignment="Top" Height="41" Width="155" Style="{StaticResource BlackWhite}" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" Command="{Binding TriggerEasterEggCommand}" />
+        <Button Grid.Column="1" HorizontalAlignment="Center" Margin="0,400,0,0" Grid.Row="1" VerticalAlignment="Top" Height="41" Width="155" Style="{StaticResource BlackWhite}" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" Command="{Binding TriggerEasterEggCommand}"/>
         <Grid Panel.ZIndex="100000" x:Name="OverlayGrid" Visibility="Visible" Background="Transparent" Grid.ColumnSpan="3" Margin="0,-2,-1,2" Grid.RowSpan="2">
             <Label Content="正在加载……" HorizontalAlignment="Left" IsHitTestVisible="False" VerticalAlignment="Top" Height="68" Width="264" FontSize="40" Foreground="#FFFFEED4" FontFamily="/Fonts/#Source Han Sans CN" FontWeight="Heavy" Margin="502,21,0,0"/>
         </Grid>

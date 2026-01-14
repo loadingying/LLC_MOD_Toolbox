@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using LLC_MOD_Toolbox.Services;
 
 [assembly: log4net.Config.XmlConfigurator(ConfigFile = "App.config", ConfigFileExtension = "config", Watch = true)]
 namespace LLC_MOD_Toolbox
@@ -9,6 +10,7 @@ namespace LLC_MOD_Toolbox
     public partial class App : System.Windows.Application
     {
         private static Mutex _mutex = null;
+
         protected override void OnStartup(StartupEventArgs e)
         {
             bool createdNew;
@@ -21,16 +23,28 @@ namespace LLC_MOD_Toolbox
                 Current.Shutdown();
                 return;
             }
+
+            // 初始化服务容器
+            ServiceLocator.ConfigureServices();
+
             base.OnStartup(e);
-            this.DispatcherUnhandledException += App_DispatcherUnhandledException; ;
+            this.DispatcherUnhandledException += App_DispatcherUnhandledException;
         }
+
         private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
             Exception ex = e.Exception;
             Log.logger.Error("出现了问题：\n", ex);
-            UniversalDialog.ShowMessage($"运行中出现了未经处理的严重问题，且在这个错误发生后，工具箱将关闭。\n若要反馈，请带上链接或日志。\n反馈请勿！请勿截图此页面！\n错误分析原因：\n{ex.Message}", "错误", null, null);
             e.Handled = true;
-            Application.Current.Shutdown();
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                UniversalDialog.ShowMessage(
+                    $"运行中出现了未经处理的严重问题，且在这个错误发生后，工具箱将关闭。\n若要反馈，请带上链接或日志。\n反馈请勿！请勿截图此页面！\n错误分析原因：\n{ex.Message}",
+                    "错误",
+                    null,
+                    null);
+                Application.Current.Shutdown();
+            }), System.Windows.Threading.DispatcherPriority.Background);
         }
     }
 }

@@ -9,6 +9,7 @@
 *.user
 *.userosscache
 *.sln.docstates
+AGENTS.md
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -363,3 +364,17 @@ MigrationBackup/
 FodyWeavers.xsd
 
 makeInstaller.bat
+
+# AI Agent documentation (local only, not for version control)
+AGENTS.md
+CLAUDE.md
+
+# AI-generated evaluation reports (local only, not for version control)
+MVVM_ARCHITECTURE_EVALUATION.md
+
+# Documentation files (local only, not for version control)
+Docs/
+
+# Claude Code AI assistant local data
+.claude/
+LLC_MOD_Toolbox/

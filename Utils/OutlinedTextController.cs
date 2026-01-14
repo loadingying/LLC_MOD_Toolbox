@@ -3,6 +3,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
+using MediaBrush = System.Windows.Media.Brush;
+using MediaFontFamily = System.Windows.Media.FontFamily;
+using MediaFontStyle = System.Windows.FontStyle;
+using MediaSize = System.Windows.Size;
 
 namespace LLC_MOD_Toolbox
 {
@@ -14,16 +18,16 @@ namespace LLC_MOD_Toolbox
                 new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.AffectsMeasure));
 
         public static readonly DependencyProperty StrokeProperty =
-            DependencyProperty.Register("Stroke", typeof(Brush), typeof(OutlinedTextControl),
-                new FrameworkPropertyMetadata(Brushes.Black, FrameworkPropertyMetadataOptions.AffectsRender));
+            DependencyProperty.Register("Stroke", typeof(MediaBrush), typeof(OutlinedTextControl),
+                new FrameworkPropertyMetadata(System.Windows.Media.Brushes.Black, FrameworkPropertyMetadataOptions.AffectsRender));
 
         public static readonly DependencyProperty StrokeThicknessProperty =
             DependencyProperty.Register("StrokeThickness", typeof(double), typeof(OutlinedTextControl),
                 new FrameworkPropertyMetadata(2.0, FrameworkPropertyMetadataOptions.AffectsRender));
 
         public static readonly DependencyProperty FillProperty =
-            DependencyProperty.Register("Fill", typeof(Brush), typeof(OutlinedTextControl),
-                new FrameworkPropertyMetadata(Brushes.White, FrameworkPropertyMetadataOptions.AffectsRender));
+            DependencyProperty.Register("Fill", typeof(MediaBrush), typeof(OutlinedTextControl),
+                new FrameworkPropertyMetadata(System.Windows.Media.Brushes.White, FrameworkPropertyMetadataOptions.AffectsRender));
 
         public static readonly DependencyProperty FontSizeProperty =
             TextElement.FontSizeProperty.AddOwner(typeof(OutlinedTextControl),
@@ -31,7 +35,7 @@ namespace LLC_MOD_Toolbox
 
         public static readonly DependencyProperty FontFamilyProperty =
             TextElement.FontFamilyProperty.AddOwner(typeof(OutlinedTextControl),
-                new FrameworkPropertyMetadata(SystemFonts.MessageFontFamily, FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsRender));
+                new FrameworkPropertyMetadata(System.Windows.SystemFonts.MessageFontFamily, FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsRender));
 
         public static readonly DependencyProperty FontWeightProperty =
             TextElement.FontWeightProperty.AddOwner(typeof(OutlinedTextControl),
@@ -82,8 +86,8 @@ namespace LLC_MOD_Toolbox
             }
 
             // 生成几何图形并绘制
-            var geometry = formattedText.BuildGeometry(new Point(originX, 0));
-            drawingContext.DrawGeometry(Stroke, new Pen(Stroke, StrokeThickness), geometry); // 描边
+            var geometry = formattedText.BuildGeometry(new System.Windows.Point(originX, 0));
+            drawingContext.DrawGeometry(Stroke, new System.Windows.Media.Pen(Stroke, StrokeThickness), geometry); // 描边
             drawingContext.DrawGeometry(Fill, null, geometry); // 填充
         }
         public string Text
@@ -92,9 +96,9 @@ namespace LLC_MOD_Toolbox
             set { SetValue(TextProperty, value); }
         }
 
-        public Brush Stroke
+        public MediaBrush Stroke
         {
-            get { return (Brush)GetValue(StrokeProperty); }
+            get { return (MediaBrush)GetValue(StrokeProperty); }
             set { SetValue(StrokeProperty, value); }
         }
 
@@ -104,9 +108,9 @@ namespace LLC_MOD_Toolbox
             set { SetValue(StrokeThicknessProperty, value); }
         }
 
-        public Brush Fill
+        public MediaBrush Fill
         {
-            get { return (Brush)GetValue(FillProperty); }
+            get { return (MediaBrush)GetValue(FillProperty); }
             set { SetValue(FillProperty, value); }
         }
 
@@ -116,9 +120,9 @@ namespace LLC_MOD_Toolbox
             set { SetValue(FontSizeProperty, value); }
         }
 
-        public FontFamily FontFamily
+        public MediaFontFamily FontFamily
         {
-            get { return (FontFamily)GetValue(FontFamilyProperty); }
+            get { return (MediaFontFamily)GetValue(FontFamilyProperty); }
             set { SetValue(FontFamilyProperty, value); }
         }
 
@@ -128,19 +132,19 @@ namespace LLC_MOD_Toolbox
             set { SetValue(FontWeightProperty, value); }
         }
 
-        public FontStyle FontStyle
+        public MediaFontStyle FontStyle
         {
-            get { return (FontStyle)GetValue(FontStyleProperty); }
+            get { return (MediaFontStyle)GetValue(FontStyleProperty); }
             set { SetValue(FontStyleProperty, value); }
         }
 
-        protected override Size MeasureOverride(Size availableSize)
+        protected override MediaSize MeasureOverride(MediaSize availableSize)
         {
             if (string.IsNullOrEmpty(Text))
-                return new Size(0, 0);
+                return new MediaSize(0, 0);
 
             var formattedText = CreateFormattedText();
-            return new Size(formattedText.Width, formattedText.Height);
+            return new MediaSize(formattedText.Width, formattedText.Height);
         }
 
         private FormattedText CreateFormattedText()
@@ -148,10 +152,10 @@ namespace LLC_MOD_Toolbox
             return new FormattedText(
                 Text,
                 CultureInfo.CurrentUICulture,
-                FlowDirection.LeftToRight,
+                System.Windows.FlowDirection.LeftToRight,
                 new Typeface(FontFamily, FontStyle, FontWeight, FontStretches.Normal),
                 FontSize,
-                Brushes.Black, // 此处的颜色并不影响渲染，因为使用Geometry绘制
+                System.Windows.Media.Brushes.Black, // 此处的颜色并不影响渲染，因为使用Geometry绘制
                 VisualTreeHelper.GetDpi(this).PixelsPerDip);
         }
     }

@@ -9,168 +9,115 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using LLC_MOD_Toolbox.Interfaces;
+using LLC_MOD_Toolbox.Services;
+using LLC_MOD_Toolbox.ViewModels;
 
 namespace LLC_MOD_Toolbox
 {
 
     public partial class MainWindow : Window
     {
-        private static string nowPage = "install";
-        private static string nowInstallPage = "auto";
-        private static bool isInstalling = false;
-        private static bool eeOpening = false;
-        private static bool eeEntered = false;
         /// <summary>
-        /// 刷新页面状态。
+        /// MainViewModel实例（MVVM架构）
+        /// </summary>
+        public MainViewModel? ViewModel { get; private set; }
+
+        // 服务层引用
+        private INavigationService? _navigationService;
+        private IUIService? _uiService;
+        private IProgressService? _progressService;
+        private ILinkService? _linkService;
+        private IEasterEggService? _easterEggService;
+
+        private static bool isInstalling = false;
+
+        /// <summary>
+        /// 初始化服务层（优化版 - 延迟加载非关键服务）
+        /// </summary>
+        public void InitializeServices()
+        {
+            // 立即初始化关键服务
+            _navigationService = ServiceLocator.GetService<INavigationService>();
+            _uiService = ServiceLocator.GetService<IUIService>();
+            _progressService = ServiceLocator.GetService<IProgressService>();
+
+            // 同步isInstalling状态
+            if (ViewModel != null && _navigationService != null)
+            {
+                _navigationService.IsInstalling = ViewModel.IsInstalling;
+            }
+
+            // 初始化NavigationService的页面和控件字典
+            var pages = new Dictionary<string, Grid>
+            {
+                { "AutoInstallPage", AutoInstallPage },
+                { "FontReplacePage", FontReplacePage },
+                { "LinkPage", LinkPage },
+                { "GreytestPage", GreytestPage },
+                { "SettingsPage", SettingsPage },
+                { "AboutPage", AboutPage },
+                { "EEPage", EEPage },
+                { "GachaPage", GachaPage },
+                { "AnnouncementPage", AnnouncementPage }
+            };
+
+            var controls = new Dictionary<string, FrameworkElement>
+            {
+                { "CloseHover", CloseHover },
+                { "MinimizeHover", MinimizeHover },
+                { "AutoInstallHover", AutoInstallHover },
+                { "FontReplaceHover", FontReplaceHover },
+                { "ReplaceInstallHover", ReplaceInstallHover },
+                { "AutoInstallBTHover", AutoInstallBTHover },
+                { "AutoInstallDisabled", AutoInstallDisabled },
+                { "FontReplaceDisabled", FontReplaceDisabled },
+                { "GachaSimDisabled", GachaSimDisabled },
+                { "AutoInstallButton", AutoInstallButton },
+                { "FontReplaceButton", FontReplaceButton },
+                { "GachaSimInstallButton", GachaSimInstallButton },
+                { "AutoInstallStartButton", AutoInstallStartButton },
+                { "AutoInstallBTIng", AutoInstallBTIng }
+            };
+
+            _navigationService.InitializeNavigation(pages, controls);
+
+            Log.logger.Info("关键服务初始化完成（非关键服务将延迟加载）");
+        }
+
+        /// <summary>
+        /// 延迟初始化非关键服务（按需加载）
+        /// </summary>
+        private void EnsureLinkService()
+        {
+            if (_linkService == null)
+            {
+                _linkService = ServiceLocator.GetService<ILinkService>();
+                _linkService.InitializeDefaultLinks();
+                Log.logger.Debug("LinkService延迟初始化完成");
+            }
+        }
+
+        /// <summary>
+        /// 延迟初始化彩蛋服务（按需加载）
+        /// </summary>
+        private void EnsureEasterEggService()
+        {
+            if (_easterEggService == null)
+            {
+                _easterEggService = ServiceLocator.GetService<IEasterEggService>();
+                Log.logger.Debug("EasterEggService延迟初始化完成");
+            }
+        }
+
+        /// <summary>
+        /// 刷新页面状态（代理到NavigationService）
         /// </summary>
         public async Task RefreshPage()
         {
-            Log.logger.Info("刷新页面状态中。");
-            // 隐藏按钮Hover
-            CloseHover.Opacity = 0;
-            MinimizeHover.Opacity = 0;
-            // 隐藏面板按钮Hover
-            AutoInstallHover.Opacity = 0;
-            FontReplaceHover.Opacity = 0;
-            ReplaceInstallHover.Opacity = 0;
-            // 隐藏自动安装页面Hover
-            AutoInstallBTHover.Opacity = 0;
-            // 若在安装页面，则隐藏禁用标识
-            // 反之，则显示
-            if (nowPage == "install")
+            if (_navigationService != null)
             {
-                AutoInstallDisabled.Visibility = Visibility.Hidden;
-                FontReplaceDisabled.Visibility = Visibility.Hidden;
-                GachaSimDisabled.Visibility = Visibility.Hidden;
-                AutoInstallButton.Visibility = Visibility.Visible;
-                FontReplaceButton.Visibility = Visibility.Visible;
-                GachaSimInstallButton.Visibility = Visibility.Visible;
-                AutoInstallButton.IsHitTestVisible = true;
-                FontReplaceButton.IsHitTestVisible = true;
-            }
-            else
-            {
-                AutoInstallDisabled.Visibility = Visibility.Visible;
-                FontReplaceDisabled.Visibility = Visibility.Visible;
-                ReplaceInstallDisabled.Visibility = Visibility.Visible;
-                GachaSimDisabled.Visibility = Visibility.Visible;
-                AutoInstallButton.Visibility = Visibility.Collapsed;
-                GachaSimInstallButton.Visibility = Visibility.Collapsed;
-                FontReplaceButton.Visibility = Visibility.Collapsed;
-                AutoInstallButton.IsHitTestVisible = false;
-                FontReplaceButton.IsHitTestVisible = false;
-            }
-            // 安装中相关控件
-            if (isInstalling)
-            {
-                AutoInstallStartButton.Visibility = Visibility.Hidden;
-                AutoInstallStartButton.IsHitTestVisible = false;
-                AutoInstallBTIng.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                AutoInstallStartButton.Visibility = Visibility.Visible;
-                AutoInstallStartButton.IsHitTestVisible = true;
-                AutoInstallBTIng.Visibility = Visibility.Hidden;
-            }
-            // 安装页面相关控件
-            if (nowPage == "install")
-            {
-                switch (nowInstallPage)
-                {
-                    case "auto":
-                        await MakeGridStatuExceptSelf(AutoInstallPage);
-                        break;
-                    case "font":
-                        await MakeGridStatuExceptSelf(FontReplacePage);
-                        break;
-                    case "gacha":
-                        await MakeGridStatuExceptSelf(GachaPage);
-                        break;
-                }
-            }
-            // 配置页面相关控件
-            else if (nowPage == "link")
-            {
-                await MakeGridStatuExceptSelf(LinkPage);
-            }
-            else if (nowPage == "greytest")
-            {
-                await MakeGridStatuExceptSelf(GreytestPage);
-            }
-            else if (nowPage == "settings")
-            {
-                await MakeGridStatuExceptSelf(SettingsPage);
-            }
-            else if (nowPage == "about")
-            {
-                await MakeGridStatuExceptSelf(AboutPage);
-            }
-            else if (nowPage == "anno")
-            {
-                await MakeGridStatuExceptSelf(AnnouncementPage);
-            }
-            else
-            {
-                await MakeGridStatuExceptSelf(EEPage);
-            }
-            Log.logger.Info("刷新页面状态完成。");
-        }
-        /// <summary>
-        /// 使输入的Grid可见，隐藏其他Grid。
-        /// </summary>
-        /// <param name="g"></param>
-        public async Task MakeGridStatuExceptSelf(Grid g)
-        {
-            List<Grid> gridList =
-            [
-                AutoInstallPage,
-                FontReplacePage,
-                LinkPage,
-                GreytestPage,
-                SettingsPage,
-                AboutPage,
-                EEPage,
-                GachaPage,
-                AnnouncementPage
-            ];
-            gridList.Remove(g);
-            MakeGridStatu(g, true);
-            foreach (Grid grid in gridList)
-            {
-                MakeGridStatu(grid, false);
-            }
-            if (g != EEPage && eeOpening == false && eeEntered == true)
-            {
-                await ChangeEEVB(false);
-                eeEntered = false;
-            }
-            if (g == EEPage)
-            {
-                eeOpening = false;
-                eeEntered = true;
-            }
-            else
-            {
-                eeEntered = false;
-            }
-        }
-        /// <summary>
-        /// 切换Grid状态
-        /// </summary>
-        /// <param name="g">要操作的Grid</param>
-        /// <param name="statu">状态（True为显示，False为隐藏）</param>
-        private static void MakeGridStatu(Grid g, bool statu)
-        {
-            if (!statu)
-            {
-                g.Visibility = Visibility.Collapsed;
-                g.IsEnabled = false;
-            }
-            else
-            {
-                g.Visibility = Visibility.Visible;
-                g.IsEnabled = true;
+                await _navigationService.RefreshPageStateAsync();
             }
         }
         /// <summary>
@@ -228,30 +175,38 @@ namespace LLC_MOD_Toolbox
         /// <param name="e"></param>
         private async void AutoInstallButtonClick(object sender, RoutedEventArgs e)
         {
-            nowInstallPage = "auto";
-            await RefreshPage();
+            if (_navigationService != null)
+            {
+                await _navigationService.NavigateToInstallPageAsync("auto");
+            }
         }
         private async void FontReplaceButtonClick(object sender, RoutedEventArgs e)
         {
-            nowInstallPage = "font";
-            await RefreshPage();
+            if (_navigationService != null)
+            {
+                await _navigationService.NavigateToInstallPageAsync("font");
+            }
         }
         private async void GachaSimButtonClick(object sender, RoutedEventArgs e)
         {
             if (!isInitGacha)
             {
-                bool messageBoxResult = UniversalDialog.ShowConfirm("本抽卡模拟器资源来源自维基，可能信息更新不准时。\n本模拟器 不 会 对您的游戏数据造成任何影响。\n若您已知悉，请点击“确定”进行初始化。", "提示", this);
+                bool messageBoxResult = UniversalDialog.ShowConfirm("本抽卡模拟器资源来源自维基，可能信息更新不准时。\n本模拟器 不 会 对您的游戏数据造成任何影响。\n若您已知悉，请点击【确定】进行初始化。", "提示", this);
                 if (messageBoxResult)
                 {
-                    nowInstallPage = "gacha";
                     await InitGacha();
-                    await RefreshPage();
+                    if (_navigationService != null)
+                    {
+                        await _navigationService.NavigateToInstallPageAsync("gacha");
+                    }
                 }
             }
             else
             {
-                nowInstallPage = "gacha";
-                await RefreshPage();
+                if (_navigationService != null)
+                {
+                    await _navigationService.NavigateToInstallPageAsync("gacha");
+                }
             }
         }
         /// <summary>
@@ -261,9 +216,10 @@ namespace LLC_MOD_Toolbox
         /// <param name="e"></param>
         private async void InstallOptionClick(object sender, RoutedEventArgs e)
         {
-            nowPage = "install";
-            nowInstallPage = "auto";
-            await RefreshPage();
+            if (_navigationService != null)
+            {
+                await _navigationService.NavigateToInstallPageAsync("auto");
+            }
         }
         /// <summary>
         /// 处理配置选项按钮。
@@ -272,89 +228,103 @@ namespace LLC_MOD_Toolbox
         /// <param name="e"></param>
         private async void LinkOptionClick(object sender, RoutedEventArgs e)
         {
-            nowPage = "link";
-            await RefreshPage();
+            if (_navigationService != null)
+            {
+                await _navigationService.NavigateToAsync("link");
+            }
         }
         private async void GreytestOptionClick(object sender, RoutedEventArgs e)
         {
-            nowPage = "greytest";
-            await RefreshPage();
+            if (_navigationService != null)
+            {
+                await _navigationService.NavigateToAsync("greytest");
+            }
         }
         private async void SettingsOptionClick(object sender, RoutedEventArgs e)
         {
-            nowPage = "settings";
-            await RefreshPage();
+            if (_navigationService != null)
+            {
+                await _navigationService.NavigateToAsync("settings");
+            }
         }
         private async void AboutOptionClick(object sender, RoutedEventArgs e)
         {
-            nowPage = "about";
-            await RefreshPage();
+            if (_navigationService != null)
+            {
+                await _navigationService.NavigateToAsync("about");
+            }
         }
         private async void EEOptionClick(object sender, RoutedEventArgs e)
         {
-            nowPage = "ee";
-            await RefreshPage();
+            if (_navigationService != null)
+            {
+                await _navigationService.NavigateToAsync("ee");
+            }
         }
         public async Task ChangeProgressValue(float value)
         {
+            if (_progressService != null)
+            {
+                _progressService.SetProgress(value);
+            }
+
             value = (float)Math.Round(value, 1);
             Log.logger.Debug("安装进度：" + value + "%");
-            RectangleGeometry rectGeometry = new()
-            {
-                Rect = new Rect(0, 0, 6.24 * value, 50)
-            };
             await this.Dispatcher.BeginInvoke(() =>
             {
+                RectangleGeometry rectGeometry = new()
+                {
+                    Rect = new Rect(0, 0, 6.24 * value, 50)
+                };
                 FullProgress.Clip = rectGeometry;
             });
             Log.logger.Debug("更改进度完成。");
         }
-        private void GreytestInfoButtonClick(object sender, RoutedEventArgs e)
+        private async void GreytestInfoButtonClick(object sender, RoutedEventArgs e)
         {
-            OpenUrl("https://www.zeroasso.top/docs/community/llcdev");
-        }
-        #region 彩蛋
-        private async void WhiteBlackClickDouble(object sender, MouseButtonEventArgs e)
-        {
-            if (!eeOpening && !eeEntered && !isInAnno)
+            if (_uiService != null)
             {
-                Log.logger.Info("不要点了>_<");
-                eeOpening = true;
-                eeEntered = false;
-                await ChangeEEVB(true);
+                await _uiService.OpenUrlAsync("https://www.zeroasso.top/docs/community/llcdev");
             }
         }
+        #region 彩蛋
         public async Task ChangeEEVB(bool b)
         {
-            if (b)
+            EnsureEasterEggService();
+            if (_easterEggService != null)
             {
-                await this.Dispatcher.BeginInvoke(() =>
+                await _easterEggService.SetOptionVisibilityAsync(b);
+            }
+
+            await this.Dispatcher.BeginInvoke(() =>
+            {
+                if (b)
                 {
                     EEOption.Visibility = Visibility.Visible;
                     EEOption.IsHitTestVisible = true;
-                });
-            }
-            else
-            {
-                await this.Dispatcher.BeginInvoke(() =>
+                }
+                else
                 {
                     EEOption.Visibility = Visibility.Collapsed;
                     EEOption.IsHitTestVisible = false;
-                });
-            }
+                }
+            });
         }
         public async Task ChangeEEPic()
         {
-            string url = "https://api.zeroasso.top/v2/eepic/get_image";
-            if (configuation.Settings.general.internationalMode)
+            EnsureEasterEggService();
+            if (_easterEggService == null)
             {
-                url = "https://cdn-api.zeroasso.top/v2/eepic/get_image";
+                return;
             }
-            try
+
+            var bytes = await _easterEggService.LoadEasterEggImageAsync(
+                configuation.Settings.general.internationalMode);
+
+            if (bytes != null)
             {
-                using (var client = new HttpClient())
+                try
                 {
-                    var bytes = await client.GetByteArrayAsync(url);
                     using (var stream = new MemoryStream(bytes))
                     {
                         var bitmap = new BitmapImage();
@@ -362,31 +332,20 @@ namespace LLC_MOD_Toolbox
                         bitmap.CacheOption = BitmapCacheOption.OnLoad;
                         bitmap.StreamSource = stream;
                         bitmap.EndInit();
-                        EEPageImage.Source = bitmap;
+                        await this.Dispatcher.BeginInvoke(() =>
+                        {
+                            EEPageImage.Source = bitmap;
+                        });
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                Log.logger.Error("更改彩蛋图片失败：" + ex.Message);
+                catch (Exception ex)
+                {
+                    Log.logger.Error("显示彩蛋图片失败：" + ex.Message);
+                }
             }
         }
         #endregion
         #region 链接
-        public Dictionary<string, string> linkDictionary = [];
-        private void InitLink()
-        {
-            linkDictionary.Add("LinkButton1", "https://www.zeroasso.top");
-            linkDictionary.Add("LinkButton2", "https://space.bilibili.com/1247764479");
-            linkDictionary.Add("LinkButton3", "https://github.com/LocalizeLimbusCompany");
-            linkDictionary.Add("LinkButton4", "https://afdian.com/a/Limbus_zero");
-            linkDictionary.Add("LinkButton5", "https://paratranz.cn/projects/6860/leaderboard");
-            linkDictionary.Add("LinkButton6", "https://paratranz.cn");
-            linkDictionary.Add("LinkButton7", "https://weidian.com/?userid=1655827241");
-            linkDictionary.Add("LinkButton8", "https://limbuscompany.huijiwiki.com");
-            linkDictionary.Add("LinkButton9", "https://simpfun.cn");
-            linkDictionary.Add("LinkButton10", "https://mirrorchyan.com/");
-        }
         private async Task<string?> GetSenderName(System.Windows.Controls.Control? control)
         {
             if (control != null)
@@ -405,13 +364,14 @@ namespace LLC_MOD_Toolbox
         }
         private async void LinkButtonClick(object sender, RoutedEventArgs e)
         {
-            if (sender != null)
+            EnsureLinkService();
+            if (sender != null && _uiService != null && _linkService != null)
             {
                 string name = await GetSenderName(sender as System.Windows.Controls.Control);
-                if (!string.IsNullOrEmpty(name) && linkDictionary.TryGetValue(name, out string url))
+                var url = _linkService.GetUrl(name);
+                if (!string.IsNullOrEmpty(url))
                 {
-
-                    OpenUrl(url);
+                    await _uiService.OpenUrlAsync(url);
                 }
             }
         }
@@ -433,6 +393,10 @@ namespace LLC_MOD_Toolbox
                 AutoInstallStartButton.IsHitTestVisible = false;
                 OverlayGrid.Visibility = Visibility.Visible;
             });
+            if (_uiService != null)
+            {
+                await _uiService.DisableGlobalOperationsAsync();
+            }
         }
 
         public async Task EnableGlobalOperations()
@@ -442,6 +406,10 @@ namespace LLC_MOD_Toolbox
                 AutoInstallStartButton.IsHitTestVisible = true;
                 OverlayGrid.Visibility = Visibility.Collapsed;
             });
+            if (_uiService != null)
+            {
+                await _uiService.EnableGlobalOperationsAsync();
+            }
         }
         public async Task ChangeLeftButtonStatu(bool statu)
         {
@@ -481,13 +449,14 @@ namespace LLC_MOD_Toolbox
         }
         public async Task AlreadyReadAnno()
         {
-            nowPage = "install";
-            nowInstallPage = "auto";
             await ChangeLeftButtonStatu(true);
-            await RefreshPage();
+            if (_navigationService != null)
+            {
+                await _navigationService.NavigateToInstallPageAsync("auto");
+            }
             if (configuation.Settings.install.installWhenLaunch || isLauncherMode)
             {
-                InstallButtonClick(null, null);
+                // 已在MainWindowWD中通过ViewModel.InstallCommand处理
             }
         }
         public async Task ChangeLoadingText(string text)
@@ -497,5 +466,9 @@ namespace LLC_MOD_Toolbox
                 LoadingText.Text = text;
             });
         }
+
+        #region MVVM支持
+        // ViewModel初始化已移至MainWindowWD.xaml.cs
+        #endregion
     }
 }
