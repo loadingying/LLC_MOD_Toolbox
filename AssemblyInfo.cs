@@ -1,4 +1,7 @@
+using System.Runtime.CompilerServices;
 using System.Windows;
+
+[assembly: InternalsVisibleTo("LLC_MOD_Toolbox.Tests")]
 
 [assembly: ThemeInfo(
     ResourceDictionaryLocation.None,            //where theme specific resource dictionaries are located

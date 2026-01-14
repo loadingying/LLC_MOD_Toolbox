@@ -4,8 +4,20 @@ using System.IO;
 using System.Text.RegularExpressions;
 using Microsoft.Win32;
 
+/// <summary>
+/// Steam游戏定位器
+/// 自动查找Steam游戏的安装路径
+/// </summary>
 public static class SteamLocator
 {
+    /// <summary>
+    /// 查找Limbus Company的安装路径
+    /// </summary>
+    /// <param name="appId">Steam应用ID（默认为1973530）</param>
+    /// <param name="executableName">可执行文件名称（默认为LimbusCompany.exe）</param>
+    /// <returns>游戏安装目录的完整路径</returns>
+    /// <exception cref="InvalidOperationException">未在注册表找到Steam安装路径</exception>
+    /// <exception cref="DirectoryNotFoundException">未在任何库中找到游戏</exception>
     public static string FindLimbusCompanyPath(string? appId, string? executableName)
     {
         var steamRoot = GetSteamRootFromRegistry();
@@ -46,7 +58,9 @@ public static class SteamLocator
         throw new DirectoryNotFoundException("未在任何库中找到 Limbus Company");
     }
 
-    // ===== Helper 方法（和之前一致） =====
+    /// <summary>
+    /// 从注册表获取Steam安装根目录
+    /// </summary>
     private static string GetSteamRootFromRegistry()
     {
         if (TryRegGetString(Registry.CurrentUser, @"Software\Valve\Steam", "SteamPath", out var root) &&
@@ -60,6 +74,9 @@ public static class SteamLocator
         return string.Empty;
     }
 
+    /// <summary>
+    /// 尝试从注册表读取字符串值
+    /// </summary>
     private static bool TryRegGetString(RegistryKey hive, string path, string name, out string? value)
     {
         value = null;
@@ -73,6 +90,9 @@ public static class SteamLocator
         catch { return false; }
     }
 
+    /// <summary>
+    /// 标准化路径格式
+    /// </summary>
     private static string NormalizePath(string p)
     {
         if (string.IsNullOrWhiteSpace(p)) return p;
@@ -81,6 +101,9 @@ public static class SteamLocator
         catch { return p; }
     }
 
+    /// <summary>
+    /// 解析Steam库文件夹配置文件（libraryfolders.vdf）
+    /// </summary>
     private static IEnumerable<string> ParseLibraryFolders(string file)
     {
         var results = new List<string>();
@@ -99,6 +122,9 @@ public static class SteamLocator
         return results;
     }
 
+    /// <summary>
+    /// 解析Steam应用清单文件（appmanifest_*.acf）
+    /// </summary>
     private static string ParseInstallDir(string acf)
     {
         try
@@ -114,6 +140,9 @@ public static class SteamLocator
         return string.Empty;
     }
 
+    /// <summary>
+    /// 验证游戏目录是否有效
+    /// </summary>
     private static bool IsValidGameDir(string dir, string? executableName)
     {
         if (string.IsNullOrWhiteSpace(dir) || !Directory.Exists(dir)) return false;
